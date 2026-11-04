@@ -234,13 +234,13 @@ export default function App() {
 
   // Admin Data Actions
   const handleSaveProduct = async (product: Product) => {
-    const existing = products.find(p => p.id === product.id);
+    const existing = products.some(p => p.id === product.id);
     if (existing) {
       await apiClient.updateProduct(product.id, product);
     } else {
       await apiClient.createProduct(product);
     }
-    loadAllData();
+    await loadAllData();
   };
 
   const handleDeleteProduct = async (productId: string) => {

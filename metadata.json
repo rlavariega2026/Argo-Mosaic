@@ -1,0 +1,6 @@
+{
+  "name": "ARGO MOSAIC - Premium Surfaces & Tile Wholesale",
+  "description": "Plataforma comercial y catálogo premium para ARGO MOSAIC en Texas y EE. UU. Pisos LVP, Madera, Series Mate y Pulidos, cotizaciones y pedidos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

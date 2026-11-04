@@ -78,3 +78,8 @@ jobs:
             **/database_export.json
             **/INSTRUCCIONES_INSTALACION_HOSTINGER.md
             **/uploads/**
+
+      - name: Verify production frontend and database API
+        run: |
+          curl --fail --silent --show-error https://lavdigitalagency.com/Argo-Mosaic/ | grep -q 'assets/'
+          curl --fail --silent --show-error https://lavdigitalagency.com/Argo-Mosaic/api/products | grep -q '"success":true'

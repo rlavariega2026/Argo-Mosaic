@@ -109,7 +109,7 @@ jobs:
       - name: Diagnose public Hostinger paths
         if: always()
         run: |
-          for path in "/" "/Argo-Mosaic/" "/Argo-Mosaic/index.html" "/Argo-Mosaic/manifest.json" "/Argo-Mosaic/assets/index-De31qaFu.js" "/Argo-Mosaic/api/products"; do
+          for path in "/" "/Argo-Mosaic/" "/Argo-Mosaic/argomosaic" "/Argo-Mosaic/index.html" "/Argo-Mosaic/manifest.json" "/Argo-Mosaic/assets/index-De31qaFu.js" "/Argo-Mosaic/api/products"; do
             echo "===== $path ====="
             curl -sS -L --max-time 20 -A "Mozilla/5.0" -D - -o /tmp/argo-response "https://lavdigitalagency.com$path" -w "HTTP_STATUS=%{http_code} CONTENT_TYPE=%{content_type} SIZE=%{size_download} FINAL_URL=%{url_effective}\n" || true
             head -c 350 /tmp/argo-response 2>/dev/null || true
@@ -119,4 +119,5 @@ jobs:
       - name: Verify production frontend and database API
         run: |
           curl --fail --silent --show-error https://lavdigitalagency.com/Argo-Mosaic/ | grep -q 'assets/'
+          curl --fail --silent --show-error https://lavdigitalagency.com/Argo-Mosaic/argomosaic | grep -q 'assets/'
           curl --fail --silent --show-error https://lavdigitalagency.com/Argo-Mosaic/api/products | grep -q '"success":true'

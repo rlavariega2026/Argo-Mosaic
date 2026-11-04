@@ -49,9 +49,17 @@ jobs:
           test -n "$DB_PASS" || (echo 'Missing GitHub Actions secret DB_PASS' && exit 1)
           cp -a dist/. hostinger-package/
           DB_PASS_B64="$(printf '%s' "$DB_PASS" | base64 -w 0)"
-          printf "%s\\n" "<?php" "define('DB_HOST', 'localhost');" "define('DB_NAME', 'u596885302_database');" "define('DB_USER', 'u596885302_gerencia');" "define('DB_PASS', base64_decode('${DB_PASS_B64}'));" "define('DB_CHARSET', 'utf8mb4');" > hostinger-package/api/config.local.php
+          cat > hostinger-package/api/config.local.php <<EOF
+          <?php
+          define('DB_HOST', 'localhost');
+          define('DB_NAME', 'u596885302_database');
+          define('DB_USER', 'u596885302_gerencia');
+          define('DB_PASS', base64_decode('${DB_PASS_B64}'));
+          define('DB_CHARSET', 'utf8mb4');
+          EOF
           php -l hostinger-package/api/config.local.php
-          grep -q "define(\x27DB_PASS\x27" hostinger-package/api/config.local.php
+          head -n 1 hostinger-package/api/config.local.php | grep -qx '<?php'
+          grep -q 'DB_PASS' hostinger-package/api/config.local.php
           test -s hostinger-package/index.html
           test -s hostinger-package/api/config.local.php
 

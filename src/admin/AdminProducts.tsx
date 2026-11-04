@@ -58,9 +58,9 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
       {/* Top action bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-extrabold text-white">Catálogo de Productos y Modelos</h2>
+          <h2 className="text-xl font-extrabold text-white">Administrar Modelos y Colecciones</h2>
           <p className="text-xs text-stone-400">
-            Administra, edita, duplica o publica productos en las cuatro categorías.
+            Agrega nuevos modelos, modifica sus datos o elimina los que ya no formen parte del catálogo.
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
           className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-blue-900/40"
         >
           <Plus className="w-4 h-4" />
-          <span>Agregar Nuevo Producto</span>
+          <span>Agregar Nuevo Modelo</span>
         </button>
       </div>
 
@@ -189,14 +189,14 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                         <button
                           onClick={() => onEdit(p)}
                           className="p-1.5 rounded-md bg-stone-800 hover:bg-blue-600 hover:text-white text-stone-300 transition"
-                          title="Editar Producto"
+                          title="Editar Modelo"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => onDuplicate(p)}
                           className="p-1.5 rounded-md bg-stone-800 hover:bg-stone-700 text-stone-300 transition"
-                          title="Duplicar Producto"
+                          title="Duplicar Modelo"
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
@@ -207,7 +207,7 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                             }
                           }}
                           className="p-1.5 rounded-md bg-stone-800 hover:bg-red-600 hover:text-white text-stone-400 transition"
-                          title="Eliminar Producto"
+                          title="Eliminar Modelo"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

@@ -63,6 +63,33 @@ jobs:
           test -s hostinger-package/index.html
           test -s hostinger-package/api/config.local.php
 
+      - name: Inspect FTP account root and domain folders
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import ftplib, os
+          ftp = ftplib.FTP()
+          ftp.connect(os.environ["FTP_SERVER"], 21, timeout=20)
+          ftp.login(os.environ["FTP_USERNAME"], os.environ["FTP_PASSWORD"])
+          print("FTP PWD:", ftp.pwd())
+          def show(path):
+              try:
+                  print("LIST", path)
+                  for item in ftp.nlst(path):
+                      print(" ", item)
+              except Exception as e:
+                  print("UNAVAILABLE", path, type(e).__name__, str(e)[:180])
+          show("/")
+          show("/public_html")
+          show("/domains")
+          show("/domains/lavdigitalagency.com")
+          show("/domains/lavdigitalagency.com/public_html")
+          ftp.quit()
+          PY
+
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

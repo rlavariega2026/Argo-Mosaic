@@ -1,0 +1,80 @@
+name: Build and deploy ARGO MOSAIC to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "README.md"
+      - "hostinger-package/database*.sql"
+      - "hostinger-package/database_export.json"
+      - "hostinger-package/INSTRUCCIONES_INSTALACION_HOSTINGER.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: argo-mosaic-hostinger-production
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build React application
+        run: bun run build
+
+      - name: Set up PHP for syntax checks
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_mysql, curl, mbstring
+
+      - name: Validate PHP files
+        run: |
+          find hostinger-package/api -type f -name "*.php" -print0 | xargs -0 -n1 php -l
+
+      - name: Assemble Hostinger package
+        env:
+          DB_PASS: ${{ secrets.DB_PASS }}
+        run: |
+          test -n "$DB_PASS" || (echo "Missing GitHub Actions secret DB_PASS" && exit 1)
+          cp -a dist/. hostinger-package/
+          DB_PASS_B64="$(printf '%s' "$DB_PASS" | base64 -w 0)"
+          cat > hostinger-package/api/config.local.php <<PHP
+          <?php
+          define('DB_HOST', 'localhost');
+          define('DB_NAME', 'u596885302_database');
+          define('DB_USER', 'u596885302_gerencia');
+          define('DB_PASS', base64_decode(''' + "'${DB_PASS_B64}'" + '''));
+          define('DB_CHARSET', 'utf8mb4');
+          PHP
+          php -l hostinger-package/api/config.local.php
+          test -s hostinger-package/index.html
+          test -s hostinger-package/api/config.local.php
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: ./hostinger-package/
+          server-dir: /public_html/Argo-Mosaic/
+          exclude: |
+            **/database*.sql
+            **/database_export.json
+            **/INSTRUCCIONES_INSTALACION_HOSTINGER.md
+            **/uploads/**

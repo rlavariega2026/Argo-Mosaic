@@ -12,7 +12,7 @@ switch ($method) {
             // Default settings if empty
             $settings = [
                 'companyName' => 'ARGO MOSAIC',
-                'logoUrl' => '/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png',
+                'logoUrl' => '/Argo-Mosaic/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png',
                 'descriptionEn' => 'Leading importer and commercial distributor of premier architectural porcelain, tile, and luxury vinyl surfaces in Texas and the United States.',
                 'descriptionEs' => 'Líder en importación y distribución comercial de porcelanatos arquitectónicos, duela vinílica y pisos de lujo en Texas y Estados Unidos.',
                 'phone' => '+1 (214) 790-2840',

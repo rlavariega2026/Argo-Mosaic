@@ -3,6 +3,59 @@ import { Product, Order, QuoteRequest, SampleRequest, SalesRep, CompanySettings 
 // Vite BASE_URL keeps API requests working when hosted below the domain root.
 const API_BASE = `${import.meta.env.BASE_URL}api`;
 
+const parseObject = (value: unknown): Record<string, any> => {
+  if (value && typeof value === 'object') return value as Record<string, any>;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+  return {};
+};
+
+// MySQL returns snake_case keys and numeric values as strings.
+// Normalize every product before it reaches React components.
+const normalizeProduct = (raw: any): Product => ({
+  ...raw,
+  id: String(raw.id ?? ''),
+  nameEn: raw.nameEn ?? raw.name_en ?? '',
+  nameEs: raw.nameEs ?? raw.name_es ?? '',
+  model: raw.model ?? '',
+  category: raw.category ?? 'LVP',
+  brand: raw.brand ?? 'ARGO MOSAIC',
+  descriptionEn: raw.descriptionEn ?? raw.description_en ?? '',
+  descriptionEs: raw.descriptionEs ?? raw.description_es ?? '',
+  size: raw.size ?? '',
+  productType: raw.productType ?? raw.product_type ?? '',
+  availability: raw.availability ?? 'In Stock',
+  price: Number(raw.price ?? 0),
+  pricePerBox: Number(raw.pricePerBox ?? raw.price_per_box ?? 0),
+  pricePerSqFt: Number(raw.pricePerSqFt ?? raw.price_per_sqft ?? 0),
+  sku: raw.sku ?? '',
+  badge: raw.badge ?? 'none',
+  status: raw.status ?? 'published',
+  stock: Number(raw.stock ?? 0),
+  youtubeVideoUrl: raw.youtubeVideoUrl ?? raw.youtube_video_url ?? '',
+  primaryImage: raw.primaryImage ?? raw.primary_image ?? '',
+  ambientImage: raw.ambientImage ?? raw.ambient_image ?? '',
+  galleryStyle: raw.galleryStyle ?? raw.gallery_style ?? 'editorial',
+  gallery: Array.isArray(raw.gallery) ? raw.gallery.map((item: any) => ({
+    ...item,
+    id: String(item.id ?? ''),
+    url: item.url ?? '',
+    title: item.title ?? '',
+    type: item.type ?? 'ambient',
+  })) : [],
+  specs: parseObject(raw.specs ?? raw.specs_json),
+  packaging: parseObject(raw.packaging ?? raw.packaging_json),
+  documents: parseObject(raw.documents ?? raw.documents_json),
+  createdAt: raw.createdAt ?? raw.created_at,
+  updatedAt: raw.updatedAt ?? raw.updated_at,
+});
+
 export const apiClient = {
   // Products
   async getProducts(): Promise<Product[]> {
@@ -10,7 +63,7 @@ export const apiClient = {
       const res = await fetch(`${API_BASE}/products`);
       if (!res.ok) throw new Error('Failed to fetch products');
       const data = await res.json();
-      return data.products || [];
+      return Array.isArray(data.products) ? data.products.map(normalizeProduct) : [];
     } catch (err) {
       console.error('getProducts error:', err);
       const cached = localStorage.getItem('argo_products_cache');
@@ -23,7 +76,7 @@ export const apiClient = {
       const res = await fetch(`${API_BASE}/products/${encodeURIComponent(id)}`);
       if (!res.ok) return null;
       const data = await res.json();
-      return data.product || null;
+      return data.product ? normalizeProduct(data.product) : null;
     } catch (err) {
       console.error('getProduct error:', err);
       return null;
@@ -34,14 +87,14 @@ export const apiClient = {
     const res = await fetch(`${API_BASE}/products`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(product) });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.message || 'Unable to create product');
-    return data.product;
+    return normalizeProduct({ ...product, id: data.id ?? product.id });
   },
 
   async updateProduct(id: string, product: Partial<Product>): Promise<Product> {
     const res = await fetch(`${API_BASE}/products/${encodeURIComponent(id)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(product) });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.message || 'Unable to update product');
-    return data.product;
+    return normalizeProduct(data.product ?? { ...product, id });
   },
 
   async deleteProduct(id: string): Promise<boolean> {

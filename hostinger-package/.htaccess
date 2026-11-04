@@ -1,0 +1,42 @@
+# ============================================================
+# ARGO MOSAIC - HOSTINGER PRODUCTION .HTACCESS
+# ============================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Security headers
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+
+  # GZIP Compression
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript application/json
+  </IfModule>
+
+  # Route API requests to PHP backend
+  RewriteRule ^api/products/?$ api/products.php [L,QSA]
+  RewriteRule ^api/products/([^/]+)/?$ api/products.php?id=$1 [L,QSA]
+  RewriteRule ^api/orders/?$ api/orders.php [L,QSA]
+  RewriteRule ^api/orders/([^/]+)/?$ api/orders.php?id=$1 [L,QSA]
+  RewriteRule ^api/quotes/?$ api/quotes.php [L,QSA]
+  RewriteRule ^api/quotes/([^/]+)/?$ api/quotes.php?id=$1 [L,QSA]
+  RewriteRule ^api/samples/?$ api/samples.php [L,QSA]
+  RewriteRule ^api/settings/?$ api/settings.php [L,QSA]
+  RewriteRule ^api/sales-reps/?$ api/sales_reps.php [L,QSA]
+  RewriteRule ^api/sales-reps/([^/]+)/?$ api/sales_reps.php?id=$1 [L,QSA]
+  RewriteRule ^api/upload/?$ api/upload.php [L,QSA]
+  RewriteRule ^api/paypal/create-order/?$ api/paypal.php?action=create [L,QSA]
+  RewriteRule ^api/paypal/capture-order/?$ api/paypal.php?action=capture [L,QSA]
+  RewriteRule ^api/admin/login/?$ api/auth.php [L,QSA]
+
+  # Don't rewrite real files or directories
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Fallback all other client routes to React SPA index.html
+  RewriteRule ^ index.html [L]
+</IfModule>

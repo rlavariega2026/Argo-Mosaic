@@ -42,7 +42,7 @@ $targetPath = $uploadDir . $filename;
 if (move_uploaded_file($file['tmp_name'], $targetPath)) {
     echo json_encode([
         'success' => true,
-        'fileUrl' => '/uploads/' . $filename,
+        'fileUrl' => '/Argo-Mosaic/uploads/' . $filename,
         'filename' => $filename,
         'size' => $file['size']
     ]);

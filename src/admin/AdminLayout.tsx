@@ -40,7 +40,7 @@ interface AdminLayoutProps {
   settings: CompanySettings;
   onExitAdmin: () => void;
   onRefreshData: () => void;
-  onSaveProduct: (product: Product) => void;
+  onSaveProduct: (product: Product) => Promise<void> | void;
   onDeleteProduct: (productId: string) => void;
   onToggleProductStatus: (product: Product) => void;
   onUpdateOrderStatus: (orderId: string, status: any) => void;
@@ -79,7 +79,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   // Sidebar navigation menu items
   const menuItems: { id: string; label: string; icon: any; count?: number; categoryFilter?: CategoryType }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'products', label: 'Todos los Modelos', icon: Package, count: products.length },
+    { id: 'products', label: 'Administrar Modelos', icon: Package, count: products.length },
     { id: 'products-lvp', label: 'LVP', icon: Layers, categoryFilter: 'LVP' },
     { id: 'products-wooden', label: 'Wooden', icon: Layers, categoryFilter: 'Wooden' },
     { id: 'products-matte', label: 'Matte Series', icon: Layers, categoryFilter: 'Matte Series' },
@@ -241,8 +241,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         {isFormOpen ? (
           <AdminProductForm
             initialProduct={editingProduct}
-            onSave={(prod) => {
-              onSaveProduct(prod);
+            onSave={async (prod) => {
+              await onSaveProduct(prod);
               setIsFormOpen(false);
               setEditingProduct(null);
             }}

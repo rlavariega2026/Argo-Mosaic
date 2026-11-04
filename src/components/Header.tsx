@@ -30,6 +30,7 @@ interface HeaderProps {
   onOpenCompare: () => void;
   onOpenQuote: () => void;
   onOpenPublishModal: () => void;
+  isPublicMode: boolean;
   settings: CompanySettings | null;
 }
 
@@ -44,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCompare,
   onOpenQuote,
   onOpenPublishModal,
+  isPublicMode,
   settings,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -85,25 +87,29 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="flex items-center gap-2.5 ml-auto">
-            {/* Editar App Button */}
-            <button
-              onClick={() => handleNavClick('admin')}
-              className="flex items-center gap-1.5 text-[11px] font-bold text-slate-800 hover:text-blue-700 bg-white hover:bg-slate-100 transition px-2.5 py-1 rounded-md border border-slate-300 shadow-xs"
-              title={lang === 'es' ? 'Editar todos los campos y datos de la app' : 'Edit all app fields and data'}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600" />
-              <span>{lang === 'es' ? 'Editar App' : 'Edit App'}</span>
-            </button>
-
-            {/* Hostinger & Publish Modal Trigger */}
-            <button
-              onClick={onOpenPublishModal}
-              className="flex items-center gap-1.5 text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-700 transition px-2.5 py-1 rounded-md shadow-xs"
-              title="¿Dónde publicar y ver el resultado?"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>{lang === 'es' ? 'Publicar en Hostinger' : 'Publish to Hostinger'}</span>
-            </button>
+            {!isPublicMode && (
+              <>
+                            {/* Editar App Button */}
+                            <button
+                              onClick={() => handleNavClick('admin')}
+                              className="flex items-center gap-1.5 text-[11px] font-bold text-slate-800 hover:text-blue-700 bg-white hover:bg-slate-100 transition px-2.5 py-1 rounded-md border border-slate-300 shadow-xs"
+                              title={lang === 'es' ? 'Editar todos los campos y datos de la app' : 'Edit all app fields and data'}
+                            >
+                              <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600" />
+                              <span>{lang === 'es' ? 'Editar App' : 'Edit App'}</span>
+                            </button>
+                
+                            {/* Hostinger & Publish Modal Trigger */}
+                            <button
+                              onClick={onOpenPublishModal}
+                              className="flex items-center gap-1.5 text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-700 transition px-2.5 py-1 rounded-md shadow-xs"
+                              title="¿Dónde publicar y ver el resultado?"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              <span>{lang === 'es' ? 'Publicar en Hostinger' : 'Publish to Hostinger'}</span>
+                            </button>
+              </>
+            )}
 
             {/* Language Switcher */}
             <div className="flex items-center gap-1 bg-white rounded-md p-0.5 border border-slate-200 shadow-xs">
@@ -372,26 +378,30 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="pt-2 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                handleNavClick('admin');
-              }}
-              className="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border border-slate-300 shadow-xs"
-            >
-              <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-              <span>{lang === 'es' ? 'Editar App (Todos los Campos)' : 'Edit App (All Fields)'}</span>
-            </button>
-
-            <button
-              onClick={() => {
-                onOpenPublishModal();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full py-2.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border border-blue-200"
-            >
-              <Download className="w-4 h-4 text-blue-600" />
-              <span>Publicar en Hostinger (ZIP)</span>
-            </button>
+            {!isPublicMode && (
+              <>
+                            <button
+                              onClick={() => {
+                                handleNavClick('admin');
+                              }}
+                              className="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-800 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border border-slate-300 shadow-xs"
+                            >
+                              <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+                              <span>{lang === 'es' ? 'Editar App (Todos los Campos)' : 'Edit App (All Fields)'}</span>
+                            </button>
+                
+                            <button
+                              onClick={() => {
+                                onOpenPublishModal();
+                                setMobileMenuOpen(false);
+                              }}
+                              className="w-full py-2.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border border-blue-200"
+                            >
+                              <Download className="w-4 h-4 text-blue-600" />
+                              <span>Publicar en Hostinger (ZIP)</span>
+                            </button>
+              </>
+            )}
 
             <button
               onClick={() => {

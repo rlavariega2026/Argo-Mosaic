@@ -2,13 +2,12 @@ name: Build and deploy ARGO MOSAIC to Hostinger
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths-ignore:
-      - "README.md"
-      - "hostinger-package/database*.sql"
-      - "hostinger-package/database_export.json"
-      - "hostinger-package/INSTRUCCIONES_INSTALACION_HOSTINGER.md"
+      - README.md
+      - hostinger-package/database*.sql
+      - hostinger-package/database_export.json
+      - hostinger-package/INSTRUCCIONES_INSTALACION_HOSTINGER.md
   workflow_dispatch:
 
 permissions:
@@ -37,28 +36,20 @@ jobs:
       - name: Set up PHP for syntax checks
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: '8.2'
           extensions: pdo_mysql, curl, mbstring
 
       - name: Validate PHP files
-        run: |
-          find hostinger-package/api -type f -name "*.php" -print0 | xargs -0 -n1 php -l
+        run: find hostinger-package/api -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Assemble Hostinger package
         env:
           DB_PASS: ${{ secrets.DB_PASS }}
         run: |
-          test -n "$DB_PASS" || (echo "Missing GitHub Actions secret DB_PASS" && exit 1)
+          test -n "$DB_PASS" || (echo 'Missing GitHub Actions secret DB_PASS' && exit 1)
           cp -a dist/. hostinger-package/
           DB_PASS_B64="$(printf '%s' "$DB_PASS" | base64 -w 0)"
-          cat > hostinger-package/api/config.local.php <<PHP
-          <?php
-          define('DB_HOST', 'localhost');
-          define('DB_NAME', 'u596885302_database');
-          define('DB_USER', 'u596885302_gerencia');
-          define('DB_PASS', base64_decode(''' + "'${DB_PASS_B64}'" + '''));
-          define('DB_CHARSET', 'utf8mb4');
-          PHP
+          printf "%s\\n" "<?php" "define('DB_HOST', 'localhost');" "define('DB_NAME', 'u596885302_database');" "define('DB_USER', 'u596885302_gerencia');" "define('DB_PASS', base64_decode('${DB_PASS_B64}'));" "define('DB_CHARSET', 'utf8mb4');" > hostinger-package/api/config.local.php
           php -l hostinger-package/api/config.local.php
           test -s hostinger-package/index.html
           test -s hostinger-package/api/config.local.php

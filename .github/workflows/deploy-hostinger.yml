@@ -99,7 +99,7 @@ jobs:
           protocol: ftp
           port: 21
           local-dir: ./hostinger-package/
-          server-dir: /public_html/Argo-Mosaic/
+          server-dir: /domains/lavdigitalagency.com/public_html/Argo-Mosaic/
           exclude: |
             **/database*.sql
             **/database_export.json

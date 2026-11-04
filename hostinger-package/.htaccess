@@ -24,6 +24,9 @@
   RewriteRule ^api/paypal/capture-order/?$ api/paypal.php?action=capture [L,QSA]
   RewriteRule ^api/admin/login/?$ api/auth.php [L,QSA]
 
+  # Public storefront URL: serve the React app without nesting the API.
+  RewriteRule ^argomosaic/?$ index.html [L]
+
   # Existing files and folders pass through unchanged.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d

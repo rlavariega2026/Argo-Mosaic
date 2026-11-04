@@ -1,7 +1,7 @@
 {
-  "id": "/",
-  "start_url": "/",
-  "scope": "/",
+  "id": "/Argo-Mosaic/",
+  "start_url": "/Argo-Mosaic/",
+  "scope": "/Argo-Mosaic/",
   "name": "ARGO MOSAIC — Premium Surfaces & Flooring",
   "short_name": "ARGO MOSAIC",
   "description": "Plataforma comercial y catálogo premium para ARGO MOSAIC en Texas. Pisos LVP, Madera, Series Mate y Pulidos.",
@@ -11,19 +11,19 @@
   "theme_color": "#1d4ed8",
   "icons": [
     {
-      "src": "/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png",
+      "src": "/Argo-Mosaic/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png",
+      "src": "/Argo-Mosaic/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png",
+      "src": "/Argo-Mosaic/assets/aistudio/Argo_Mosaic_Logo_Transparente_0aa6f2ad.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

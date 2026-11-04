@@ -21,7 +21,7 @@ import { apiClient } from '../api/client';
 
 interface AdminProductFormProps {
   initialProduct?: Product | null;
-  onSave: (product: Product) => void;
+  onSave: (product: Product) => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -33,6 +33,8 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
   const [activeTab, setActiveTab] = useState<'general' | 'specs' | 'packaging' | 'gallery' | 'docs'>('general');
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   // Form State initialized from initialProduct or blank
   const [product, setProduct] = useState<Product>(
@@ -190,18 +192,27 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
     });
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (!product.nameEn && !product.nameEs) {
-      alert('Por favor ingresa al menos el nombre del producto.');
+    if (saving) return;
+    if (!product.nameEn?.trim() && !product.nameEs?.trim()) {
+      setSaveError('Ingresa al menos el nombre del producto.');
       return;
     }
-    // Set fallback primary image if empty
-    let finalProduct = { ...product };
+    const finalProduct = { ...product };
     if (!finalProduct.primaryImage && finalProduct.gallery?.length > 0) {
       finalProduct.primaryImage = finalProduct.gallery[0].url;
     }
-    onSave(finalProduct);
+    setSaving(true);
+    setSaveError('');
+    try {
+      await onSave(finalProduct);
+    } catch (err: any) {
+      console.error('Product save failed:', err);
+      setSaveError(err?.message || 'No se pudo guardar el producto. Tus cambios siguen en el formulario.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -234,14 +245,22 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
             Cancelar
           </button>
           <button
+            type="button"
             onClick={handleSave}
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-blue-900/30"
+            disabled={saving}
+            className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-wait text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-blue-900/30"
           >
             <Save className="w-4 h-4" />
-            <span>Guardar Producto</span>
+            <span>{saving ? 'Guardando...' : 'Guardar Producto'}</span>
           </button>
         </div>
       </div>
+
+      {saveError && (
+        <div role="alert" className="mx-5 mt-4 p-3 rounded-lg border border-red-800 bg-red-950/60 text-red-200 text-xs">
+          {saveError}
+        </div>
+      )}
 
       {/* Tabs Bar */}
       <div className="flex overflow-x-auto border-b border-stone-800 bg-stone-950 text-xs font-semibold scrollbar-none">
@@ -1009,10 +1028,11 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/40"
+            disabled={saving}
+            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-wait text-white rounded-lg font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/40"
           >
             <Save className="w-4 h-4" />
-            <span>Guardar Producto</span>
+            <span>{saving ? 'Guardando...' : 'Guardar Producto'}</span>
           </button>
         </div>
       </form>

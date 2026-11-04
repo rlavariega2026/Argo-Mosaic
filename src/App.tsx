@@ -48,6 +48,7 @@ export default function App() {
   const [lang, setLang] = useState<Language>('es'); // Default to Spanish as requested by the prompt language, easily toggleable to EN
   const t = translations[lang];
   const [publishModalOpen, setPublishModalOpen] = useState(false);
+  const isPublicMode = window.location.pathname.replace(/\/+$/, '') === '/Argo-Mosaic/argomosaic';
 
   // Routing and State
   const [activeTab, setActiveTab] = useState<string>('home'); // home | models | gallery | about | contact | admin
@@ -317,7 +318,7 @@ export default function App() {
           homeHeroSubtitleEs: '',
           homeHeroImage: '',
         }}
-        onExitAdmin={() => setActiveTab('home')}
+        onExitAdmin={() => { window.location.assign(`${import.meta.env.BASE_URL}argomosaic`); }}
         onRefreshData={loadAllData}
         onSaveProduct={handleSaveProduct}
         onDeleteProduct={handleDeleteProduct}
@@ -350,6 +351,7 @@ export default function App() {
         onOpenCompare={() => setCompareModalOpen(true)}
         onOpenQuote={() => setQuoteModalOpen(true)}
         onOpenPublishModal={() => setPublishModalOpen(true)}
+        isPublicMode={isPublicMode}
         settings={settings}
       />
 
